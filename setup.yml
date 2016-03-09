@@ -1,0 +1,57 @@
+---
+- hosts: newsbuddy-workers
+  remote_user: root
+  vars:
+    somevar: VARIABLE
+
+  tasks:
+#  - name: configure sudoers file
+#    lineinfile: "dest=/etc/sudoers state=present regexp='^%wheel' line='%wheel ALL=(ALL) NOPASSWD: ALL' validate='visudo -cf %s'"
+
+  - name: create users
+    user: name=archiveteam
+
+  - name: install prereq packages
+    apt: pkg={{item}} state=installed update_cache=yes
+    with_items:
+     - git
+     - build-essential
+     - python3-dev
+     - python3-pip
+     - youtube-dl
+     - sudo
+     - screen
+
+  - name: install pip via easy_install
+    easy_install: name=pip
+
+  - name: create directory structure
+    file: path=/home/archiveteam/newsbuddy state=directory mode=0755 owner=archiveteam group=archiveteam
+    file: path=/home/archiveteam/newsbuddy/new_lists state=directory mode=0755 owner=archiveteam group=archiveteam
+
+  - name: install rsync target pointer
+    copy: src=templates/rsync_target dest=/home/archiveteam/newsbuddy
+
+  - name: install rsyncd config
+    copy: src=templates/rsyncd.conf dest=/etc/rsyncd.conf
+    
+  - name: restart rsyncd
+    service: name=rsync state=started
+
+  - name: install grab-site
+    pip: name='git+https://github.com/ludios/grab-site.git#egg=grab-site' executable=pip3
+
+  - name: deploy worker script
+    git: repo=https://github.com/ArchiveTeam/NewsGrabber.git dest=/home/archiveteam/NewsGrabber
+    become: yes
+    become_user: archiveteam
+
+  - name: start worker process
+    command: screen -dm python worker.py
+    args:
+      chdir: /home/archiveteam/NewsGrabber/
+    become: yes
+    become_user: archiveteam
+
+#  - name: announce rsync target to irc
+#    script: scripts/irc.sh
