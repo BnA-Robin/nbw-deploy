@@ -1,12 +1,8 @@
 ---
 - hosts: newsbuddy-workers
   remote_user: root
-  vars:
-    somevar: VARIABLE
 
   tasks:
-#  - name: configure sudoers file
-#    lineinfile: "dest=/etc/sudoers state=present regexp='^%wheel' line='%wheel ALL=(ALL) NOPASSWD: ALL' validate='visudo -cf %s'"
 
   - name: create users
     user: name=archiveteam
@@ -43,6 +39,11 @@
 
   - name: deploy worker script
     git: repo=https://github.com/ArchiveTeam/NewsGrabber.git dest=/home/archiveteam/NewsGrabber
+    become: yes
+    become_user: archiveteam
+
+  - name: symlink worker file
+    file: src=/home/archiveteam/NewsGrabber/worker.py dest=/home/archiveteam/newsbuddy/worker.py state=link
     become: yes
     become_user: archiveteam
 
