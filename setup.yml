@@ -19,10 +19,12 @@
      - screen
 
   - name: create directory structure
-    file: path=/home/archiveteam/newsbuddy state=directory mode=0755 owner=archiveteam group=archiveteam
-    file: path=/home/archiveteam/newsbuddy/new_lists state=directory mode=0755 owner=archiveteam group=archiveteam
-    file: path=/home/archiveteam/newsbuddy/old_lists state=directory mode=0755 owner=archiveteam group=archiveteam
-    file: path=/home/archiveteam/newsbuddy/ready state=directory mode=0755 owner=archiveteam group=archiveteam
+    file: path={{item}} state=directory mode=0755 owner=archiveteam group=archiveteam
+    with_items:
+     - /home/archiveteam/newsbuddy
+     - /home/archiveteam/newsbuddy/new_lists
+     - /home/archiveteam/newsbuddy/old_lists
+     - /home/archiveteam/newsbuddy/ready
 
   - name: install rsync target pointer
     copy: src=templates/rsync_target dest=/home/archiveteam/newsbuddy
