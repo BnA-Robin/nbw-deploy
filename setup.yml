@@ -18,12 +18,11 @@
      - sudo
      - screen
 
-  - name: install pip via easy_install
-    easy_install: name=pip
-
   - name: create directory structure
     file: path=/home/archiveteam/newsbuddy state=directory mode=0755 owner=archiveteam group=archiveteam
     file: path=/home/archiveteam/newsbuddy/new_lists state=directory mode=0755 owner=archiveteam group=archiveteam
+    file: path=/home/archiveteam/newsbuddy/old_lists state=directory mode=0755 owner=archiveteam group=archiveteam
+    file: path=/home/archiveteam/newsbuddy/ready state=directory mode=0755 owner=archiveteam group=archiveteam
 
   - name: install rsync target pointer
     copy: src=templates/rsync_target dest=/home/archiveteam/newsbuddy
@@ -50,7 +49,7 @@
   - name: start worker process
     command: screen -dm python worker.py
     args:
-      chdir: /home/archiveteam/NewsGrabber/
+      chdir: /home/archiveteam/newsbuddy/
     become: yes
     become_user: archiveteam
 
