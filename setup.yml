@@ -22,6 +22,12 @@
      - sudo
      - screen
      - xinetd
+     
+  - name: install tools packages
+    become: yes
+    become_method: su
+    apt: pkg={{item}} state=installed update_cache=yes
+    with_items:
      - htop
      - nload
      - nmon
