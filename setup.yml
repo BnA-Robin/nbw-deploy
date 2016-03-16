@@ -26,6 +26,7 @@
      - nload
      - nmon
      - tree
+     - vim
 
   - name: create directory structure
     become: yes
