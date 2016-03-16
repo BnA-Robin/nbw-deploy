@@ -17,6 +17,11 @@
      - youtube-dl
      - sudo
      - screen
+     - xinetd
+     - htop
+     - nload
+     - nmon
+     - tree
 
   - name: create directory structure
     file: path={{item}} state=directory mode=0755 owner=archiveteam group=archiveteam
@@ -29,11 +34,17 @@
   - name: install rsync target pointer
     copy: src=templates/rsync_target dest=/home/archiveteam/newsbuddy
 
+  - name: install rsyncd defaults config
+    copy: src=templates/rsync dest=/etc/default/rsync
+    
+  - name: install xinetd rsync service config
+    copy: src=templates/xinetdrsyncservice dest=/etc/xinetd.d/rsync
+
   - name: install rsyncd config
     copy: src=templates/rsyncd.conf dest=/etc/rsyncd.conf
     
-  - name: restart rsyncd
-    service: name=rsync state=started
+  - name: restart xinetd
+    service: name=xinetd state=started
 
   - name: install grab-site
     pip: name='git+https://github.com/ludios/grab-site.git#egg=grab-site' executable=pip3
