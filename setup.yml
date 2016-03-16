@@ -84,6 +84,14 @@
     become: yes
     become_user: archiveteam
     
+  - name: create directory for symlink grab-site
+    become: yes
+    become_method: su
+    file: path={{item}} state=directory mode=0755 owner=archiveteam group=archiveteam
+    with_items:
+     - /home/archiveteam/.local
+     - /home/archiveteam/.local/bin
+    
   - name: symlink grab-site to ~/.local/bin
     file: src=/usr/local/bin/grab-site dest=/home/archiveteam/.local/bin/grab-site state=link
     become: yes
