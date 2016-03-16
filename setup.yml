@@ -76,6 +76,11 @@
     file: src=/home/archiveteam/NewsGrabber/worker.py dest=/home/archiveteam/newsbuddy/worker.py state=link
     become: yes
     become_user: archiveteam
+    
+  - name: symlink grab-site to ~/.local/bin
+    file: src=/usr/local/bin/grab-site dest=/home/archiveteam/.local/bin/grab-site state=link
+    become: yes
+    become_user: archiveteam
 
   - name: start worker process
     command: screen -dm python worker.py
