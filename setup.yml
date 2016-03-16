@@ -1,13 +1,17 @@
 ---
 - hosts: newsbuddy-workers
-  remote_user: root
+  remote_user: bitboy
 
   tasks:
 
   - name: create users
     user: name=archiveteam
+    become: yes
+    become_method: su
 
   - name: install prereq packages
+    become: yes
+    become_method: su
     apt: pkg={{item}} state=installed update_cache=yes
     with_items:
      - git
@@ -24,6 +28,8 @@
      - tree
 
   - name: create directory structure
+    become: yes
+    become_method: su
     file: path={{item}} state=directory mode=0755 owner=archiveteam group=archiveteam
     with_items:
      - /home/archiveteam/newsbuddy
@@ -32,21 +38,33 @@
      - /home/archiveteam/newsbuddy/ready
 
   - name: install rsync target pointer
+    become: yes
+    become_method: su
     copy: src=templates/rsync_target dest=/home/archiveteam/newsbuddy
 
   - name: install rsyncd defaults config
+    become: yes
+    become_method: su
     copy: src=templates/rsync dest=/etc/default/rsync
     
   - name: install xinetd rsync service config
+    become: yes
+    become_method: su
     copy: src=templates/xinetdrsyncservice dest=/etc/xinetd.d/rsync
 
   - name: install rsyncd config
+    become: yes
+    become_method: su
     copy: src=templates/rsyncd.conf dest=/etc/rsyncd.conf
     
   - name: restart xinetd
+    become: yes
+    become_method: su
     service: name=xinetd state=started
 
   - name: install grab-site
+    become: yes
+    become_method: su
     pip: name='git+https://github.com/ludios/grab-site.git#egg=grab-site' executable=pip3
 
   - name: deploy worker script
