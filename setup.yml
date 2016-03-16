@@ -60,7 +60,7 @@
   - name: restart xinetd
     become: yes
     become_method: su
-    service: name=xinetd state=started
+    command: /etc/init.d/xinetd restart
 
   - name: install grab-site
     become: yes
